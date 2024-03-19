@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:thesushi/models/shop.dart';
 import 'package:thesushi/pages/intro_page.dart';
 import 'package:thesushi/pages/menu_page.dart';
+import 'package:provider/provider.dart';
 
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(create: (context) => Shop(),child: const MyApp(),)
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,7 +42,7 @@ class MyApp extends StatelessWidget {
       home:  IntroPage(),
       routes: {
         '/intropage' :(context) =>  IntroPage(),
-        '/menupage'  :(context) => MenuPage(),
+        '/menupage'  :(context) => MenuPage( ),
       },
     );
   }

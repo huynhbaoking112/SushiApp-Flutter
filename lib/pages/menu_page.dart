@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:thesushi/components/button.dart';
 import 'package:thesushi/components/food_tile.dart';
 import 'package:thesushi/models/food.dart';
+import 'package:thesushi/models/shop.dart';
+import 'package:thesushi/pages/cart_page.dart';
 import 'package:thesushi/pages/food_details_page.dart';
 import 'package:thesushi/theme/color.dart';
 
@@ -16,36 +19,38 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  List<Food> foodMenu = [
-    Food(
-        name: 'Salmon Sushi',
-        price: "21.00",
-        imagePath: 'https://cdn-icons-png.flaticon.com/128/4977/4977805.png',
-        rating: '4.9'),
-    Food(
-        name: 'Tuna',
-        price: "23.00",
-        imagePath: 'https://cdn-icons-png.flaticon.com/128/4001/4001024.png',
-        rating: '4.3'),
-  ];
+  // List<Food> foodMenu = Shop().foodMenu;
 
-
-   void navigateToFoodDetials(int index){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FoodDetailsPage(food: foodMenu[index])));
-   }
+  void navigateToFoodDetials(int index) {
+    final shop = context.read<Shop>();
+    final foodMenu = shop.foodMenu;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FoodDetailsPage(food: foodMenu[index])));
+  }
 
   @override
   Widget build(BuildContext context) {
+    final shop = context.read<Shop>();
+    final foodMenu = shop.foodMenu;
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         leading: Icon(Icons.menu),
+        foregroundColor: Colors.grey[800],
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Tokyo')],
+          children: [Text('Tokyo', style: TextStyle(fontWeight: FontWeight.w600),)],
         ),
+        actions: [
+          //cart Button
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(),));
+          }, icon: Icon(Icons.shopping_cart))
+        ],
       ),
       body: Column(
         children: [
@@ -129,50 +134,57 @@ class _MenuPageState extends State<MenuPage> {
 
           Expanded(
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-
+            scrollDirection: Axis.horizontal,
             itemCount: foodMenu.length,
             itemBuilder: (context, index) => FoodTile(
               food: foodMenu[index],
-              onTap:() => navigateToFoodDetials(index),
+              onTap: () => navigateToFoodDetials(index),
             ),
           )),
 
-          const SizedBox(height: 25,),
-          
+          const SizedBox(
+            height: 25,
+          ),
+
           Container(
             padding: EdgeInsets.all(25),
             margin: EdgeInsets.all(25),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white70
-            ),
+                borderRadius: BorderRadius.circular(20), color: Colors.white70),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    Image.network('https://cdn-icons-png.flaticon.com/128/3183/3183422.png',height: 60,),
-                    SizedBox(width: 10,),
+                    Image.network(
+                      'https://cdn-icons-png.flaticon.com/128/3183/3183422.png',
+                      height: 60,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Salmon Eggs', style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 17
-                        )),
-                        Text('\$21.00', style: TextStyle(
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.bold
-                        ),)
+                        Text('Salmon Eggs',
+                            style: GoogleFonts.dmSerifDisplay(fontSize: 17)),
+                        Text(
+                          '\$21.00',
+                          style: TextStyle(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold),
+                        )
                       ],
                     ),
                   ],
                 ),
-                Icon(Icons.check_circle_outline, size: 27,)
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 27,
+                )
               ],
             ),
           )
-          
         ],
       ),
     );
